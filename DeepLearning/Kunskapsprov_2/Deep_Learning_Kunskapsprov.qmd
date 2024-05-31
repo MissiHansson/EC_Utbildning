@@ -1,0 +1,430 @@
+---
+title: "Rock, Papper, Scissors with Deep Learning"
+subtitle: "EC Utbildning Deep Learning Knowledge Control"
+author: "Missi Hansson"
+date: "2024-05-14"
+format:
+  html:
+    toc: true
+    toc-depth: 2
+    code-fold: true
+    theme: journal
+    
+---
+
+## Introduction
+
+Welcome to my documentation on building a rock-paper-scissors game using Convolutional Neural Networks (CNN), OpenCV, and MediaPipe. This project aims to create aan interactive two-player game where gestures are recognized in real-time using a webcam. 
+
+This project is part of Deep Learning course at EC Utbildning and includes theoretical questions that should be answered to demonstrate my understanding of deep learning required for this project.
+
+## Theoretical Questions
+
+### 1. How are AI, Machine Learning, and Deep Learning related?
+Artificial Intelligence (AI) is the science of making computers think like humans. Machine Learning (ML) is a type of AI that focuses on building machines that learn from data. Deep Learning (DL) is a subset of ML that uses neural networks to learn from data.
+
+### 2. How are TensorFlow and Keras related?
+TensorFlow is an open-source library used to build neural networks. Keras is an application programming interface (API) built on top of TensorFlow, which enables it to build and train neural networks more easily. 
+
+### 3. What is a parameter? What is a hyperparameter?
+A parameter is a setting that controls how something works. For example, in the code below, the image to be loaded has dimensions of 224 by 224, which is specified by a parameter. See the image below for more examples.
+
+<div style="text-align: center;">
+<img src="Images_Deep_Learning_Kunskapsprov/Example_parameters.png" alt="Example of parameters" style="width: 50%; height: auto;">
+<p>Example of parameters</p>
+</div>
+
+Hyperparameter is like a control knob for the learning process. It doesn't directly affect the model itself, but rather how the model learns from data. An obvious example being learning rate. 
+
+### 4. How can training, validation, and test data be used in model evaluation?
+Training data: A model learns from the training data finding patterns and relationships within the data.
+
+Validation data: When making decisions about a model and it architecture one fine tunes the hyperparameters, this is done using the validation data.
+
+Test data: With test data one can asses the model because the model has not yet seen any of the test data. How well does the model generalize?
+
+### 5. Explain the following code:
+<div style="text-align: left;">
+<img src="Images_Deep_Learning_Kunskapsprov/Question_5_image.png">
+</div>
+
+This code is building and training a neural network. Here is an explanation line by line:
+
+* Retrieving the number of features (or columns) in the training dataset.
+* Initializing a Sequential model.
+* Adding a dense layer with 100 neurons, defining the shape of the input as the number of features (columns) in the X_train dataset, and using ReLU as the activation function (introduces non-linearity into the model).
+* Adding a dropout layer where 20% of neurons aren't used to help prevent overfitting.
+* Adding another dense layer with 50 neurons, using ReLU activation function.
+* Adding the output layer with 1 neuron, using the sigmoid activation function.
+* Configuring the neural network: using the Adam optimizer to adjust the weights, defining binary cross-entropy as the loss function to be minimized, and tracking accuracy to see how well the model is performing.
+* Setting up early stopping, which stops the training when the validation set stops improving after 5 epochs. This is used to avoid overfitting.
+* Training the model on the training data: 20% of the training data will be used for validation. The model will train for a maximum of 100 epochs, but it may stop earlier due to the early stopping callback.
+
+### 6.	What is the purpose of regularizing a model? 
+The purpose of regularizing a model is to prevent overfitting.
+
+### 7.	"Dropout" is a regularization technique, what is it?
+Dropout is a regularization technique used during training that randomly removes a given percentage of the neurons. This forces the other neurons to step up and contribute more, ensuring that no single neuron becomes ***too*** important. This technique helps the model become more robust, avoids overfitting, and improves its generalizability.
+
+### 8.	 "Early stopping" is a regularization technique, what is it?
+Early stopping is a regularization technique that monitors the model's performance on a validation dataset during training. If the model's performance on the validation dataset doesn't improve after a given number of epochs, training is stopped to prevent further overfitting. 
+
+### 9.	Your colleague asks you what type of neural network is popular for image analysis?
+Convolutional Neural Networks (CNNs) are the most popular type of neural network for image analysis tasks due to their ability to automatically detect important features in a computationally efficient manner. (According to the article [Applied Deep Learning - Part 4 Convolutional Neural Networks](https://towardsdatascience.com/applied-deep-learning-part-4-convolutional-neural-networks-584bc134c1e2#5c12) by Arden Dertat in Towards Data Science)
+
+### 10. Briefly explain how a Convolutional Neural Network (CNN) works.
+CNNs begin with an input layer, which is the image itself. Initially, the network identifies simple structures within the image using a process called convolution, where filters detect basic features such as horizontal or vertical lines. Once these features are identified (often after several layers), the CNN uses pooling to summarize the detected information. The network then applies new, more complex filters, repeating this process through multiple layers. Towards the end, fully connected layers start combining the features. In the final layer, the CNN makes a decision based on the cumulative information it has processed.
+<div style="text-align: center;">
+<img src="Images_Deep_Learning_Kunskapsprov/CNN_process.png" style="width: 90%; height: auto;">
+<p>Image from Ch. 14 CNN architectures, Hands-On Machine Learning with Scikit-Learn, Keras, and TensorFlow by Aurélien Géron</p>
+</div>
+
+### 11. Your friend has an album with 100 different pictures containing, for example, tennis balls and zebras. How could he/she classify these images despite not having any additional data to train a model?
+To classify these images without additional data, a pre-trained model can be used. This process is known as transfer learning. ResNet is an example of such a model that can be utilized. Subsequently, the model can be fine-tuned to classify tennis balls and zebras. There is no need for additional training data, as the pre-trained model can accurately classify these images based on its learned knowledge.
+
+### 12. Explain the following code:
+<div style="text-align: left;">
+<img src="Images_Deep_Learning_Kunskapsprov/Question_12_image.png">
+</div>
+
+The code illustrates the process of saving and loading models. When saving the model's architecture, weights, and training configuration (examples being optimizer, loss function, and metrics) are preserved. Loading the model enables its reuse without the necessity of retraining, thereby saving time and computational resources.
+
+### 13. Deep learning models can take a long time to train. Using a GPU, for example via Google Colab, can significantly speed up the training process. Read the following article:[CPU vs. GPU for Machine Learning](https://blog.purestorage.com/purely-informational/cpu-vs-gpu-for-machine-learning/) and briefly explain what a CPU and a GPU are.
+<br>
+A CPU (central processing unit) is the brain of the computer. It processes instructions that come from programs. It is made of several cores which means that it can do several tasks at the same time.
+
+A GPU (Graphics Processing Unit) is like a cpu but stronger and used for visuals in a computer. Its many cores work together to process visual data quickly, making it perfect for gaming, video editing, and complex visual tasks like deep learning. 
+
+## Working with Deeplearning
+```{python, echo = false}
+# Importing necessary libraries
+import os
+import cv2
+import mediapipe as mp
+import numpy as np
+import tensorflow as tf
+import matplotlib.pyplot as plt
+from tensorflow.keras.preprocessing.image import load_img, img_to_array
+from tensorflow.keras.callbacks import EarlyStopping, ModelCheckpoint
+from tensorflow.keras.models import load_model, Sequential
+from tensorflow.keras.layers import Dense, Dropout, Flatten
+from tensorflow.keras.optimizers import Adam
+from tensorflow.keras.applications import MobileNetV2
+from tensorflow.keras.utils import image_dataset_from_directory
+from tensorflow.keras import layers
+
+```
+
+### The dataset
+I first needed to find a dataset of hands using rock, papper and scissors. Tensorflow has a dataset, but I choose to use one from kaggle. [Rock-Paper-Scissors Images](https://www.kaggle.com/datasets/drgfreeman/rockpaperscissors/) 
+
+The dataset contains a total of 2188 images. All images are  RGB, .png and are 300 wide by 200 high pixels format. The images are separated in three sub-folders named 'rock', 'paper' and 'scissors' according to their respective class.´
+
+Next step was to import these images using tensorflow image_dataset_from_directory. While importing I could set 80% for training and 20% for validation. Test blir då using the webcam.
+
+Next thing is looking at class balance:
+
+```{python, output = true}
+# Looking for inbalance in the dataset in the different classes.
+
+dataset_dir = r"C:\Users\Hanss\Documents\Utbildning\Deep Learning\Rock_Papper_Scissors_Projekt"
+
+class_names = os.listdir(dataset_dir)
+class_counts = {}
+
+for class_name in class_names:
+    class_dir = os.path.join(dataset_dir, class_name)
+    num_samples = len(os.listdir(class_dir))
+    class_counts[class_name] = num_samples
+
+print("Class Counts:", class_counts)
+```
+
+Importing the dataset, tensorflow understands on its own that there are 3 classes.
+```{python} 
+
+
+IMG_SIZE = (200, 300)
+BATCH_SIZE = 32
+
+# Create train, val and test set
+train_ds = tf.keras.preprocessing.image_dataset_from_directory(
+    dataset_dir,
+    validation_split=0.2,  
+    subset="training",     
+    seed = 42,              
+    image_size=IMG_SIZE,   
+    batch_size=BATCH_SIZE  
+)
+
+val_ds = tf.keras.preprocessing.image_dataset_from_directory(
+    dataset_dir,
+    validation_split=0.2,  
+    subset = "validation",   
+    seed = 42,              
+    image_size=IMG_SIZE,   
+    batch_size=BATCH_SIZE  
+)
+
+# The images in the dataset are 200 x 300. These need to be resized because the image size that MobileNetV2 has trained is 224 x 224.
+
+def resize_and_pad_image(image, label):
+    
+    scale_factor = 224 / 300
+    new_width = 224  
+    new_height = int(200 * scale_factor)  
+
+    image = tf.image.resize(image, [new_height, new_width])
+
+    pad_height = (224 - new_height) // 2 
+    pad_top = pad_height
+    pad_bottom = 224 - new_height - pad_top
+
+    image = tf.image.pad_to_bounding_box(image, pad_top, 0, 224, 224)
+
+    return image, label
+
+train_ds = train_ds.map(resize_and_pad_image)
+val_ds = val_ds.map(resize_and_pad_image)
+
+
+
+
+```
+
+
+Example images from each class.
+
+
+```{python}
+# Getting an idea of what the dataset looks like
+class_names = [name for name in os.listdir(dataset_dir) if os.path.isdir(os.path.join(dataset_dir, name))]
+class_images = {class_name: [] for class_name in class_names}
+
+for class_name in class_images.keys():
+    class_path = os.path.join(dataset_dir, class_name)
+    image_files = sorted(os.listdir(class_path))[:3]  # Get the first 3 images from each class
+    for image_file in image_files:
+        class_images[class_name].append(os.path.join(class_path, image_file))
+
+
+plt.figure(figsize=(6, 8))
+
+for i, (class_name, images) in enumerate(class_images.items()):
+    for j, image_path in enumerate(images):
+        img = load_img(image_path, target_size=(30, 30))  
+        plt.subplot(4, 3, i * 3 + j + 1)
+        plt.imshow(img)
+        plt.title(class_name)
+        plt.axis('off')
+
+plt.tight_layout()
+plt.show()
+```
+
+
+## Building and Training the CNN Model
+I googled a bit ahead of time to find tips on popular pretrained models to use and landed on MobileNetV2. This will be my base model. MobileNetV2 expects images to be 224 x 224. So the images, after loading, are resized and padded to match the size the model needs. This way the images keep their aspect ratio.
+
+Through some trial and error and many hours, I have come to the following conclusions:
+
+<b> Data Augmentation</b>
+To improve the generalization of the model and to make the most out of the available data, I applied several data augmentation techniques. These techniques include random flipping, rotation, contrast, and brightness adjustments.
+
+<b>Unfreezing Layers</b>
+Initially, all layers of the base model (MobileNetV2) were frozen. To better adapt the model to my dataset, I chose to unfreeze the last layer of the base model.
+
+<b>Model Pipeline</b>
+Below is the model pipeline used for training:
+
+```{python}
+
+# Define the data augmentation pipeline: testing different ways to change/create data images through data augmentation
+data_augmentation = Sequential([
+    layers.RandomFlip("horizontal_and_vertical"),
+    layers.RandomRotation(0.8),
+    layers.RandomContrast(0.2),
+    layers.RandomBrightness(0.2),
+    #layers.RandomZoom(0.2),
+    #layers.RandomTranslation(height_factor=0.1, width_factor=0.1)
+])
+
+
+# Load the pretrained MobileNetV2 model 
+base_model = MobileNetV2(input_shape=(224, 224, 3), include_top=False, weights='imagenet')
+base_model.trainable = False
+
+for layer in base_model.layers[-1:]:  # Unfreeze one layer to gain a little more complexity
+    layer.trainable = True
+
+# Building the model pipeline
+model = Sequential([
+    data_augmentation,
+    base_model,
+    layers.Flatten(),
+    layers.Dropout(0.5),
+    layers.Dense(3, activation='softmax')
+])
+
+# Compile the model
+optimizer = Adam(learning_rate=0.0001) 
+model.compile(optimizer=optimizer, loss='sparse_categorical_crossentropy', metrics=['accuracy'])
+
+model_checkpoint = ModelCheckpoint("rock_paper_scissors_best_model.keras", save_best_only=True, monitor='val_loss')
+early_stopping = EarlyStopping(monitor='val_loss', patience=5, restore_best_weights=True)
+
+
+#history = model.fit(train_ds, 
+#                    validation_data=val_ds, 
+#                    epochs=10, 
+#                    callbacks=[early_stopping, model_checkpoint]
+#                    )
+
+```
+
+I chose to monitor validation loss (`val_loss`) with early stopping to prevent overfitting by stopping training if the validation loss doesn't improve for 5 epochs. I use the `sparse_categorical_crossentropy` loss because it is suitable for multi-class classification problems where labels are integers. The learning rate of 0.0001 is chosen to ensure gradual and stable updates to the model weights. Additionally, I use `ModelCheckpoint` to save the best model during training.
+
+I plot the training and validation accuracy and loss across epochs to visually inspect the model's performance and check for signs of overfitting or underfitting. This helps in understanding how well the model is learning and generalizing to the validation data.
+
+```{python}
+# looking at graphs of training and validation accuracy and loss across epochs
+"""
+def plot_metrics(history):
+    acc = history.history['accuracy']
+    val_acc = history.history['val_accuracy']
+    loss = history.history['loss']
+    val_loss = history.history['val_loss']
+    epochs_range = range(len(acc))
+
+    plt.figure(figsize=(12, 8))
+    plt.subplot(1, 2, 1)
+    plt.plot(epochs_range, acc, label='Training Accuracy')
+    plt.plot(epochs_range, val_acc, label='Validation Accuracy')
+    plt.legend(loc='lower right')
+    plt.title('Training and Validation Accuracy')
+
+    plt.subplot(1, 2, 2)
+    plt.plot(epochs_range, loss, label='Training Loss')
+    plt.plot(epochs_range, val_loss, label='Validation Loss')
+    plt.legend(loc='upper right')
+    plt.title('Training and Validation Loss')
+    plt.show()
+
+plot_metrics(history)
+"""
+```
+
+
+## Integrating OpenCV and MediaPipe
+Real-time hand gesture recognition. Objective: to accurately identify and classify hand gestures (Rock, Paper, Scissors) from a live video feed. The process involved loading the trained model, capturing video frames, detecting hands using MediaPipe, extracting and preprocessing the hand regions, and then predicting the gesture using the trained model. The detected gestures were displayed on the video feed in real-time. This is a test of the model. 
+
+```{python}
+# Load the pre-trained hand gesture model
+classifier = load_model('rock_paper_scissors_best_model.keras')
+
+
+gesture_labels = ['Rock', 'Paper', 'Scissors']
+
+# Initialize MediaPipe Hands
+mp_hands = mp.solutions.hands
+mp_drawing = mp.solutions.drawing_utils
+hands = mp_hands.Hands(static_image_mode=False, 
+                       max_num_hands=2, 
+                       min_detection_confidence=0.5, 
+                       min_tracking_confidence=0.5
+                       )
+
+# Initialize video capture
+cap = cv2.VideoCapture(0)
+
+while True:
+    ret, frame = cap.read()
+    if not ret:
+        break
+
+   # Convert the frame to RGB, as video capturing has format BGR
+    frame_rgb = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
+
+    # analyze hands on image
+    results = hands.process(frame_rgb)
+
+    if results.multi_hand_landmarks:
+        for hand_landmarks in results.multi_hand_landmarks:
+            # Get bounding box of the hand
+            h, w, c = frame.shape
+            bbox = []
+            for landmark in hand_landmarks.landmark:
+                bbox.append((int(landmark.x * w), int(landmark.y * h)))
+            bbox = np.array(bbox)
+            x_min, y_min = np.min(bbox, axis=0)
+            x_max, y_max = np.max(bbox, axis=0)
+
+            # Ensure the bounding box is within frame limits
+            x_min = max(0, x_min)
+            y_min = max(0, y_min)
+            x_max = min(w, x_max)
+            y_max = min(h, y_max)
+
+            # Extract hand region of interest (ROI) and preprocess it in the same way it was done for the model
+            hand_roi = frame[y_min:y_max, x_min:x_max]
+            if hand_roi.size > 0:
+                hand_roi = cv2.resize(hand_roi, (200, 300))
+                # Note: here the image should be padded when resizing to the size the model expects, but this step was skipped
+                hand_roi = cv2.resize(hand_roi, (224, 224))
+                hand_roi = cv2.cvtColor(hand_roi, cv2.COLOR_BGR2RGB)
+                hand_roi = np.expand_dims(hand_roi, axis=0) / 255.0  # Normalize
+
+                # Predict the hand gesture
+                prediction = classifier.predict(hand_roi)[0]
+                label = gesture_labels[np.argmax(prediction)]
+
+                # Draw the bounding box and label on the frame
+                cv2.rectangle(frame, (x_min, y_min), (x_max, y_max), (0, 255, 0), 2)
+                cv2.putText(frame, label, (x_min, y_min - 10), cv2.FONT_HERSHEY_TRIPLEX, 1, (0, 255, 0), 2)
+
+            # Draw the hand landmarks on the frame, interesting to see what mediapipe finds
+            mp_drawing.draw_landmarks(frame, hand_landmarks, mp_hands.HAND_CONNECTIONS)
+
+    cv2.imshow('Hand Gesture Recognition', frame)
+
+    if cv2.waitKey(1) & 0xFF == ord('q'):
+        break
+
+cap.release()
+cv2.destroyAllWindows()
+
+
+```
+
+## Reflections
+
+The training and validation accuracy graphs show a promising trend, with validation accuracy reaching above 0.9. However, despite this high validation accuracy, the test accuracy is lower than expected. This discrepancy suggests potential overfitting or issues in the generalization of the model.
+
+Several aspects need further investigation and improvement:
+
+* Confusion Matrix: Analyzing a confusion matrix can provide insights into which classes the model is confusing the most. This can help identify specific weaknesses in the model’s predictions.
+
+* Model Preprocessing Consistency: Ensuring that the preprocessing steps for the training data match those for the video input is crucial. Any discrepancies here could lead to reduced performance during real-time testing.
+
+* Data Augmentation: Although some data augmentation techniques have been applied, exploring additional augmentation methods might help in improving the model’s robustness. Techniques such as random zoom, translation, and adding noise could be beneficial.
+
+* Regularization Techniques: Implementing regularization techniques such as dropout, batch normalization can help reduce overfitting.
+
+Going foward:
+Further work of the above mentioned is a good idea, but going foward I am intrested in leveraging MediaPipe's hand landmarks for gesture recognition. Directly using the landmarks can potentially improve accuracy and robustness, as this approach might be less sensitive to variations in the input data compared to using raw image data.
+
+
+## Evaluation
+1. Challenges you have had and how you have dealt with them.
+
+Challenges: The first dataset I worked with was the same as the ones in the video. They were grayscale and 48 x 48. After several days of trying to understand why I couldn't get correct predictions I investigated the dataset mannually. I discovered several images that were all black, som had symbols and not an individuals face, images with a white background and text. In other words the dataset needed to be cleaned. I abbondened this idea given the time issues of the project and found a more suitable dataset. This one is reffered to in the emotion classification code.
+
+Another challenge was dealing with issues where only one emotion was being detected consistently. This was primarily a preprocessing problem, which I initially thought I had under control but later discovered that I had missed some aspects. Despite achieving high accuracy and validation accuracy in training, the model did not perform well in real-world applications. This led to a lot of back and forth in fine-tuning the preprocessing steps, such as ensuring consistent image resizing, normalization, and augmentation to improve the model's robustness in practical scenarios.
+
+2. What grade you think you should get and why.
+
+I believe I deserve a VG (Very Good) because I have not only implemented the basic requirements of the project but also extended it significantly. I made two separate models: one detecting happy or angry emotions and the other recognizing hand gestures for rock-paper-scissors. I then combined these models to make simultaneous predictions. Lastly, I dug further into Mediapipe's landmarks and created a game of rock-paper-scissors that can be played using hand gestures detected in real-time. 
+
+3. Tips you would give yourself at the beginning of the course now that you have completed it.
+
+I would recommend going through the project methodically and documenting every change. I would recomend taking the time and dive into tensorboard to see if it would be useful. I feel I spent too much time trying to find the paramaters I just had that were better, but somehow never remembered. It is an important part of the process and given more time I would normally be very methodical. 
